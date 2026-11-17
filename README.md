@@ -1,18 +1,62 @@
-# HEAL Wire Trace
+# Task 3: The Wire-Trace Trial
 
-**Introduction to Robotics · Project 3 — The Wire-Trace Trial**
+**ME639: Introduction to Robotics · Course Project · 2026**
+
+**Group 7** · Under the guidance of **Prof. Madhu Vadali**
+
+| Team member | Roll number |
+| --- | --- |
+| Ashish Kumar Pant | 25320013 |
+| Gaurav Srivastava | 23110113 |
+| Hari krishna R | 25510046 |
 
 We taught an Addverb HEAL arm to guide a probe along a vertical buzz-wire course. An operator steered the arm with a keyboard and captured six-joint poses. The robot then replayed the taught path autonomously using smooth joint-space interpolation and closed-loop velocity control.
 
-**Demo video:** Pending — add the unlisted video link here before submission.
+**At a glance:** 182 waypoints · ~14 minutes of teaching · 3:43 reported turbo replay
 
-## Method
+## Watch the demo
+
+[![Watch the narrated project demo: Group 7, The Wire-Trace Trial](docs/assets/demo-poster.jpg)](docs/assets/demo.mp4)
+
+**[Watch or download the full narrated demo (89.75 seconds)](docs/assets/demo.mp4)**
+
+The video shows the setup, the operator teaching the path, the recorded data, and automatic replay. Accelerated footage is labelled. Both the opening introduction and main explanation are narrated.
+
+**Unlisted submission link:** To be added after uploading the final video. The repository copy above does not replace the required unlisted upload.
+
+### Automatic replay preview
+
+[![Animated excerpt from automatic replay; footage is accelerated](docs/assets/replay-preview.gif)](docs/assets/demo.mp4)
+
+*An accelerated excerpt from the demo. Click to open the full video with narration.*
+
+## Robot setup
+
+| Wire course and loop probe | Robot gripper |
+| :---: | :---: |
+| ![The vertical wire course and loop probe](docs/assets/wire-setup.jpg) | ![Close-up of the HEAL gripper](docs/assets/gripper.jpg) |
+
+The probe must follow the wire's bends while its orientation changes. We used Cartesian keyboard commands for teaching and separate wrist jogging where needed.
+
+## How it works
 
 1. **Teach.** `teleop_v4.py` uses the robot URDF and KDL Jacobian to convert Cartesian keyboard motions to joint velocities with damped least-squares inverse kinematics (DLS-IK). A separate joint-6 jog lets the operator reorient the probe around turns. The script saves selected waypoints, optional 10 Hz teaching samples, and a command log.
 2. **Process.** The replay program splits the curated route at sharp joint-space turns and wrist-dominated moves. It fits shape-preserving cubic (PCHIP) curves across waypoint stretches and uses quintic timing to start and end each chunk at rest.
 3. **Replay.** At a nominal 100 Hz, the controller combines joint-velocity feedforward with measured-position feedback. It checks joint limits, feedback freshness, tracking error, and lack of measured motion. A small-command deadband works around a legacy controller parsing issue; see the [technical notes](docs/technical-notes.md).
 
 **How this differs from the [assignment brief](https://debojit.notion.site/Task-3-The-Wire-Trace-Trial-28ff4aa874c4808dae54eb198ae7f410):** Teaching used powered keyboard teleoperation rather than hand guidance in gravity-compensation mode. DLS-IK runs during teaching, not replay: the saved route is already in joint coordinates. This implementation does not include Stage 2 learning, Cartesian boundary enforcement, or automatic contact detection.
+
+```mermaid
+flowchart LR
+    A[Operator keyboard input] --> B[DLS-IK]
+    B --> C[Joint velocity commands]
+    C --> D[Capture measured waypoints]
+    D --> E[PCHIP and quintic timing]
+    E --> F[Joint-space replay]
+    F --> G[HEAL arm]
+    G --> H[Joint-state feedback]
+    H --> F
+```
 
 ## Results
 
@@ -100,3 +144,4 @@ The tool reports completion time, peak commanded speeds, and maximum logged trac
 | `tools/summarize_replay.py` | Offline replay log analysis |
 | `tests/` | Offline trajectory and log checks |
 | `docs/` | Trial records, technical notes, and demo edit plan |
+| `docs/assets/` | Setup photos, animated preview, and narrated demo |
