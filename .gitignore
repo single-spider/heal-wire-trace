@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+heal_waypoints.csv
+heal_take_*.csv
+heal_commands_*.csv
+heal_forward_*.csv
+heal_smooth_*.csv
+waypoint_legacy/

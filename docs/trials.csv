@@ -1,0 +1,4 @@
+trial,direction,elapsed_s,software_result,contact_observation,evidence
+archived_forward,1 to 182,210.277862,completed,unknown,archived replay CSV
+archived_return,182 to 1,209.194687,completed,unknown,archived replay CSV
+reported_turbo,unknown,223,not independently logged,unknown,team-reported timing
